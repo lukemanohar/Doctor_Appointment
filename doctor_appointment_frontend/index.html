@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelloDoc</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            margin-top: -21px;
+            background: linear-gradient(black, rgb(0, 0, 36));
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        /* Header */
+        .container {
+            width: 100%;
+            height: 95px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #name {
+            color: white;
+            font-size: 30px;
+            margin: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin-left: 2%;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #4ecdc4;
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #4ecdc4;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Auth buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .auth-btn {
+            padding: 8px 20px;
+            border: 2px solid #2a9df4;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .auth-btn:hover {
+            background: #2a9df4;
+            transform: translateY(-2px);
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-btn {
+            background: transparent;
+            border: 2px solid #2a9df4;
+            border-radius: 8px;
+            color: white;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            background: rgba(42, 157, 244, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            font-size: 18px;
+        }
+
+        .dropdown-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-btn.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-width: 160px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu a:hover {
+            background: #f8f9fa;
+            color: #2a9df4;
+        }
+
+        .dropdown-menu a:first-child {
+            border-radius: 10px 10px 0 0;
+        }
+
+        .dropdown-menu a:last-child {
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* Cover Section */
+        .cover {
+            position: relative;
+            background: 
+                linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                linear-gradient(45deg, #667eea, #764ba2);
+            width: 100%;
+            height: 745px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
+            padding-left: 8%;
+        }
+
+        .welcome {
+            color: white;
+            margin: 10px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideIn 1.5s ease-out forwards;
+            max-width: 600px;
+        }
+
+        .cover .cta-button {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Modal Styles - FIXED FOR CENTERING */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            /* Ensure perfect centering */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: white;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+            /* Ensure the content itself is centered */
+            margin: auto;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .close:hover {
+            color: #4ecdc4;
+            transform: scale(1.1);
+        }
+
+        .form-container {
+            text-align: center;
+        }
+
+        .form-container h2 {
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 30px;
+            background: #2a9df4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 15px 0;
+        }
+
+        .btn:hover {
+            background: #f1a695;
+            transform: translateY(-2px);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-switch a {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /* Steps Section */
+        .steps-section {
+            height: 800px;
+            padding: 8rem 5% 6rem;
+            background: rgb(1, 5, 72);
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            color: #101011;
+            margin-bottom: 1rem;
+        }
+
+        .step p {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        /* Why HelloDoc Section */
+        .why-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            margin: 60px auto;
+            max-width: 1000px;
+            padding: 20px;
+        }
+
+        .why-text {
+            flex: 1;
+            color: white;
+        }
+
+        .why-text h1 {
+            color: #2a9df4;
+            margin-bottom: 20px;
+        }
+
+        .why-text ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .why-text ul li {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .icon-img {
+            width: 250px;
+            height: 250px;
+            flex-shrink: 0;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 8rem 5%;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        /* Doctors Section */
+        .doctors-section {
+            padding: 8rem 5%;
+            background: linear-gradient(135deg, #3d61ff 0%, #223f6e 100%);
+            color: white;
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .doctor-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .doctor-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(45deg, #4667fc, #62acf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .doctor-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .doctor-specialty {
+            color: #4ecdc4;
+            margin-bottom: 1rem;
+        }
+
+        .doctor-contact {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #2a9df4;
+            color: white;
+            text-decoration: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: #f1a695;
+        }
+        
+        .cta-button:not(.cover .cta-button):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(24, 1, 128, 0.4);
+        }
+
+        /* FAQ Section */
+        .faq {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 0 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .faq h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #2a9df4;
+        }
+
+        .faq p {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            color: #ddd;
+        }
+
+        .faq-item {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .faq-question {
+            width: 100%;
+            background: white;
+            color: black;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background: skyblue;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            background: white;
+            padding: 0 15px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .faq-answer p {
+            color: black;
+            padding: 15px 0;
+            margin: 0;
+        }
+
+        /* CTA Section */
+        .cta {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(to right, #2a9df4, #0077cc);
+            color: white;
+            border-radius: 12px;
+            max-width: 90%;
+            height: 300px;
+            margin: 80px auto;
+        }
+
+        .cta h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .cta p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #f0f0f0;
+        }
+
+        .cta .btn {
+            background: white;
+            color: #2a9df4;
+            font-size: 1.2rem;
+            border-radius: 20px;
+            margin-top: 3%;
+            width: auto;
+            display: inline-block;
+            padding: 12px 30px;
+        }
+
+        /* Contact Section */
+        .contact-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            margin: 60px auto;
+            width: 100%;
+            padding: 20px;
+            background-color: white;
+            border-radius: 20px;
+        }
+
+        .contact-text {
+            flex: 1;
+            color: black;
+        }
+
+        .contact-text h1 {
+            color: #2a9df4;
+            margin-bottom: 20px;
+        }
+
+        .contact-text ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .contact-text ul li {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .contact-text a {
+            color: #2a9df4;
+            text-decoration: none;
+        }
+
+        .contact-text a:hover {
+            text-decoration: underline;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-style: italic;
+            color: #666;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgb(0, 0, 20);
+            text-align: center;
+            padding: 20px;
+            color: #aaa;
+            margin-top: 50px;
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            margin-top: 10px;
+        }
+
+        .footer-links a {
+            color: #2a9df4;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1001;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification.success {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+        }
+
+        .notification.error {
+            background: linear-gradient(45deg, #f44336, #da190b);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .steps {
+                flex-direction: column;
+                gap: 40px;
+            }
+            
+            .why-flex,
+            .contact-flex {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .nav-menu {
+                gap: 1rem;
+                margin-left: 0;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .user-profile .user-info {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .user-name {
+                font-size: 14px;
+            }
+            
+            .cover {
+                padding-left: 5%;
+                text-align: center;
+                align-items: center;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 30px 25px;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="container">
+        <h1 id="name">HelloDoc</h1>
+        <ul class="nav-menu">
+            <li><a href="#home" class="nav-link">Home</a></li>
+            <li><a href="#services" class="nav-link">Services</a></li>
+            <li><a href="#doctors" class="nav-link">Doctors</a></li>
+            <li><a href="#faq" class="nav-link">FAQ</a></li>
+            <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="auth-buttons" id="authButtons">
+            <button class="auth-btn" id="loginBtn">Login</button>
+            <button class="auth-btn" id="signupBtn">Sign Up</button>
+        </div>
+        <div class="user-profile" id="userProfile" style="display: none;">
+            <div class="user-info">
+                <span class="user-name" id="userName">Welcome, User!</span>
+                <div class="profile-dropdown">
+                    <button class="profile-btn" id="profileBtn">
+                        <span class="user-avatar">👤</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" onclick="viewProfile()">My Profile</a>
+                        <a href="#" onclick="viewAppointments()">My Appointments</a>
+                        <a href="#" onclick="logout()">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hero Section -->
+    <div class="cover" id="home">
+        <h1 class="welcome">Welcome to HelloDoc <br>
+        Your Doctor, Just a Click Away</h1>
+        <p class="welcome">Experience healthcare like never before. Connect with trusted doctors instantly, anytime, anywhere. Your health, our priority.</p>
+        <button class="cta-button" onclick="openBookingModal()">Book Appointment</button>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="form-container">
+                <h2>Welcome Back</h2>
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required />
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required />
+                </div>
+                <button class="btn" onclick="login()">Login</button>
+                <div class="auth-switch">
+                    <p>Don't have an account? 
+                        <a href="#" onclick="toggleForms('signup')">Sign up here</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="form-container" style="display: none;">
+                <h2>Join HelloDoc</h2>
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" placeholder="Enter your full name" required />
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required />
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" required />
+                </div>
+                <button class="btn" onclick="signup()">Sign Up</button>
+                <div class="auth-switch">
+                    <p>Already have an account? 
+                        <a href="#" onclick="toggleForms('login')">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Steps Section -->
+    <section class="steps-section">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-icon">1</div>
+                <h3>Choose Your Doctor</h3>
+                <p>Select from our network of qualified healthcare professionals based on your needs and preferences.</p>
+            </div>
+            <div class="step">
+                <div class="step-icon">2</div>
+                <h3>Book Appointment</h3>
+                <p>Schedule your consultation at a time that works for you. No waiting rooms, no delays.</p>
+            </div>
+            <div class="step">
+                <div class="step-icon">3</div>
+                <h3>Get Treatment</h3>
+                <p>Receive professional medical care through secure video consultations and digital prescriptions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why HelloDoc -->
+    <div class="why-flex">
+        <div class="why-text">
+            <h1>Why HelloDoc?</h1>
+            <ul>
+                <li>Instant Access to Doctors – Skip the waiting room and connect within minutes.</li>
+                <li>Anytime, Anywhere Care – Whether you're at home, work, or traveling.</li>
+                <li>Trusted & Compassionate Doctors – Licensed professionals who truly listen.</li>
+                <li>No More Delays – Get answers and treatment without weeks of waiting.</li>
+                <li>Peace of Mind – Reliable healthcare that fits into your life.</li>
+            </ul>
+        </div>
+        <div class="icon-img">🏥</div>
+    </div>
+
+    <!-- What Makes Us Unique -->
+    <div class="why-flex">
+        <div class="icon-img">⚕️</div>
+        <div class="why-text">
+            <h1>What Makes Us Unique</h1>
+            <ul>
+                <li>Here When You Need Us – 24/7 access to doctors, because health doesn't keep office hours.</li>
+                <li>Care That Fits Your Life – Consult from home, work, or on the go.</li>
+                <li>Real Doctors, Real Care – Qualified and compassionate physicians who put you first.</li>
+                <li>Personal & Human – Every consultation is tailored to your needs.</li>
+                <li>Easy & Stress-Free – Quick booking, secure calls, and fast prescriptions.</li>
+                <li>Affordable for Everyone – Transparent pricing, no surprises.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <h1 class="section-title" style="color: white;">Available Services</h1>
+        <p style="text-align: center; color: white; margin-bottom: 4rem; font-size: 1.2rem;">Find the right specialist for your health needs</p>
+        <div class="services-grid">
+            <div class="service-card" onclick="openBookingModal('General Physician')">
+                <div class="service-icon">🩺</div>
+                <h3>General Physician</h3>
+                <p>Comprehensive primary care for routine checkups, common illnesses, and preventive health maintenance.</p>
+            </div>
+            <div class="service-card" onclick="openBookingModal('Pediatrician')">
+                <div class="service-icon">👶</div>
+                <h3>Pediatrician</h3>
+                <p>Specialized medical care for infants, children, and teenagers with gentle, child-friendly approach.</p>
+            </div>
+            <div class="service-card" onclick="openBookingModal('Dentist')">
+                <div class="service-icon">🦷</div>
+                <h3>Dentist</h3>
+                <p>Complete dental care including cleanings, treatments, and oral health guidance for all ages.</p>
+            </div>
+            <div class="service-card" onclick="openBookingModal('Dermatologist')">
+                <div class="service-icon">🔬</div>
+                <h3>Dermatologist</h3>
+                <p>Expert treatment for skin, hair, and nail conditions with advanced dermatological solutions.</p>
+            </div>
+            <div class="service-card" onclick="openBookingModal('Cardiologist')">
+                <div class="service-icon">❤️</div>
+                <h3>Cardiologist</h3>
+                <p>Heart health specialists providing comprehensive cardiovascular care and prevention strategies.</p>
+            </div>
+            <div class="service-card" onclick="openBookingModal('Ophthalmologist')">
+                <div class="service-icon">👁️</div>
+                <h3>Ophthalmologist</h3>
+                <p>Complete eye and vision care from routine exams to advanced treatment of eye conditions.</p>
+            </div>
+            <div class="service-card" onclick="openBookingModal('Neurologist')">
+                <div class="service-icon">🧠</div>
+                <h3>Neurologist</h3>
+                <p>Specialized treatment for brain, nerve, and spinal disorders with cutting-edge diagnostic tools.</p>
+            </div>
+            <div class="service-card" onclick="openBookingModal('Orthopedic')">
+                <div class="service-icon">🦴</div>
+                <h3>Orthopedic</h3>
+                <p>Expert care for bones, joints, muscles, and sports injuries with rehabilitation support.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Doctors Section -->
+    <section id="doctors" class="doctors-section">
+        <h2 class="section-title">Meet Our Doctors</h2>
+        <div class="doctors-grid" id="doctorsGrid">
+            <!-- Doctors will be loaded here dynamically -->
+        </div>
+        <div style="text-align: center; margin-top: 3rem;">
+            <button class="cta-button" onclick="loadDoctors()">Load All Doctors</button>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <h2>Frequently Asked Questions</h2>
+        <p>Find quick answers to common questions about HelloDoc.</p>
+    
+        <div class="faq-item">
+            <button class="faq-question">
+                What is HelloDoc? <span class="arrow">˅</span>
+            </button>
+            <div class="faq-answer">
+                <p>HelloDoc is a platform that makes booking doctor appointments simple, fast, and stress-free. Patients can book, manage, and consult doctors online with ease.</p>
+            </div>
+        </div>
+    
+        <div class="faq-item">
+            <button class="faq-question">
+                Is HelloDoc available 24/7? <span class="arrow">˅</span>
+            </button>
+            <div class="faq-answer">
+                <p>Yes! HelloDoc connects you to doctors anytime, anywhere – because health doesn't keep office hours.</p>
+            </div>
+        </div>
+    
+        <div class="faq-item">
+            <button class="faq-question">
+                Do I need to download an app? <span class="arrow">˅</span>
+            </button>
+            <div class="faq-answer">
+                <p>No, you can use HelloDoc directly from your browser. It's quick, easy, and secure.</p>
+            </div>
+        </div>
+    
+        <div class="faq-item">
+            <button class="faq-question">
+                How much does it cost? <span class="arrow">˅</span>
+            </button>
+            <div class="faq-answer">
+                <p>Our pricing is transparent and affordable. You only pay for the consultation, with no hidden charges.</p>
+            </div>
+        </div>
+    
+        <div class="faq-item">
+            <button class="faq-question">
+                Are the doctors qualified? <span class="arrow">˅</span>
+            </button>
+            <div class="faq-answer">
+                <p>Yes, all HelloDoc doctors are licensed, experienced, and compassionate professionals you can trust.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeBookingModal()">&times;</span>
+            <h2>Book Your Appointment</h2>
+            <form id="bookingForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name:</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name:</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="age">Age:</label>
+                        <input type="number" id="age" name="age" min="1" max="120" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="specialty">Specialty:</label>
+                    <select id="specialty" name="specialty" required>
+                        <option value="">Select Specialty</option>
+                        <option value="General Physician">General Physician</option>
+                        <option value="Pediatrician">Pediatrician</option>
+                        <option value="Dentist">Dentist</option>
+                        <option value="Dermatologist">Dermatologist</option>
+                        <option value="Cardiologist">Cardiologist</option>
+                        <option value="Ophthalmologist">Ophthalmologist</option>
+                        <option value="Neurologist">Neurologist</option>
+                        <option value="Orthopedic">Orthopedic</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="doctor">Doctor:</label>
+                  <select id="doctor" name="doctor" required>
+                      <option value="">-- Select Doctor --</option>
+                  </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointmentDate">Preferred Date:</label>
+                        <input type="date" id="appointmentDate" name="appointmentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Preferred Time:</label>
+                        <input type="time" id="appointmentTime" name="appointmentTime" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="symptoms">Symptoms/Reason for Visit:</label>
+                    <textarea id="symptoms" name="symptoms" rows="3" placeholder="Describe your symptoms or reason for the appointment..."></textarea>
+                </div>
+
+                <div class="form-group" style="text-align: center; margin-top: 20px;">
+                    <button type="submit" class="cta-button" style="width: 100%; padding: 15px 30px; font-size: 1.2rem;">
+                        📅 Book My Appointment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2>Your Health, Just a Click Away</h2>
+        <p>Book your appointment in minutes and consult with trusted doctors anytime, anywhere.</p>
+        <button class="btn" onclick="openBookingModal()">Book Now</button>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-flex" id="contact">
+        <div class="contact-text">
+            <h1>💬 Need Help? Contact Our Support Team</h1>
+            <p>Our support team is here to assist you. You can reach us anytime through the following:</p>
+            
+            <ul>
+                <li>📧 Email: <a href="mailto:support@hellodoc.com">support@hellodoc.com</a></li>
+                <li>☎️ Phone: +1 (800) 123-4567</li>
+                <li>💬 Live Chat: Mon–Fri, 9am–6pm EST</li>
+            </ul>
+
+            <p class="note">
+                ⚠️ For urgent medical matters, please contact your healthcare provider directly or dial emergency services.
+            </p>
+        </div>
+
+        <div class="icon-img">📞</div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 HelloDoc. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#home">Home</a> |
+            <a href="#services">Services</a> |
+            <a href="#doctors">Doctors</a> |
+            <a href="#faq">FAQ</a> |
+            <a href="#contact">Contact</a>
+        </div>
+    </footer>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:8080';
+        let doctors = [];
+        let currentUser = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInitialDoctors();
+            setupEventListeners();
+            setMinDate();
+            checkLoginState();
+        });
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Auth modal handlers
+            document.getElementById('loginBtn').addEventListener('click', () => openAuthModal('login'));
+            document.getElementById('signupBtn').addEventListener('click', () => openAuthModal('signup'));
+
+            // Profile dropdown handler
+            document.getElementById('profileBtn').addEventListener('click', toggleProfileDropdown);
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.profile-dropdown')) {
+                    closeProfileDropdown();
+                }
+            });
+
+            // FAQ functionality
+            document.querySelectorAll(".faq-question").forEach((q) => {
+                q.addEventListener("click", () => {
+                    const answer = q.nextElementSibling;
+                    q.classList.toggle("active");
+
+                    if (answer.style.maxHeight) {
+                        answer.style.maxHeight = null;
+                        answer.style.padding = "0 15px";
+                    } else {
+                        answer.style.maxHeight = answer.scrollHeight + "px";
+                        answer.style.padding = "15px";
+                    }
+                });
+            });
+
+            // Specialty change listener
+            document.getElementById('specialty').addEventListener('change', function() {
+                loadDoctorOptions();
+            });
+
+            // Form submission
+            document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmission);
+
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                const authModal = document.getElementById('authModal');
+                const bookingModal = document.getElementById('bookingModal');
+                const appointmentsModal = document.getElementById('appointmentsModal');
+                
+                if (event.target === authModal) {
+                    closeAuthModal();
+                }
+                if (event.target === bookingModal) {
+                    closeBookingModal();
+                }
+                if (event.target === appointmentsModal) {
+                    closeAppointmentsModal();
+                }
+            };
+        }
+
+        // Set minimum date for appointment booking
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').min = today;
+        }
+
+        // Auth Modal Functions
+        function openAuthModal(type) {
+            const modal = document.getElementById('authModal');
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            
+            modal.classList.remove('hidden');
+            
+            if (type === 'login') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+            } else {
+                signupForm.style.display = 'block';
+                loginForm.style.display = 'none';
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+            // Clear form inputs
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+        }
+
+        function toggleForms(type) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            
+            if (type === 'login') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+            } else {
+                signupForm.style.display = 'block';
+                loginForm.style.display = 'none';
+            }
+        }
+
+        // Auth Functions
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/patients/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const patient = await response.json();
+                    currentUser = patient;
+                    updateUIForLoggedInUser(patient);
+                    showNotification(`Welcome back, ${patient.name}!`, 'success');
+                    closeAuthModal();
+                } else {
+                    const error = await response.text();
+                    showNotification(`Login failed: ${error}`, 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                // Demo mode
+                currentUser = { name: 'Demo User', email: 'demo@hellodoc.com' };
+                updateUIForLoggedInUser(currentUser);
+                showNotification('Login successful! (Demo mode)', 'success');
+                closeAuthModal();
+            }
+        }
+
+        async function signup() {
+            const patient = {
+                name: document.getElementById("signupName").value,
+                email: document.getElementById("signupEmail").value,
+                password: document.getElementById("signupPassword").value
+            };
+
+            if (!patient.name || !patient.email || !patient.password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/patients/signup`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(patient)
+                });
+
+                if (response.ok) {
+                    const newPatient = await response.json();
+                    currentUser = newPatient;
+                    updateUIForLoggedInUser(newPatient);
+                    showNotification("Signup successful! Welcome to HelloDoc!", 'success');
+                    closeAuthModal();
+                } else {
+                    const error = await response.text();
+                    showNotification("Signup failed: " + error, 'error');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                // Demo mode
+                currentUser = { name: patient.name, email: patient.email };
+                updateUIForLoggedInUser(currentUser);
+                showNotification("Signup successful! (Demo mode)", 'success');
+                closeAuthModal();
+            }
+        }
+
+        // Doctor Functions
+        async function loadInitialDoctors() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctors`);
+                if (response.ok) {
+                    doctors = await response.json();
+                } else {
+                    doctors = getSampleDoctors();
+                }
+            } catch (error) {
+                console.log('API not available, using sample data');
+                doctors = getSampleDoctors();
+            }
+            displaySampleDoctors();
+        }
+
+        function getSampleDoctors() {
+            return [
+                { id: 1, name: "Dr. Sarah Paul", specialisation: "Cardiologist", email: "sarah143@gmail.com", phone: "+91-9876543210" },
+                { id: 2, name: "Dr. Priya Singh", specialisation: "Dermatologist", email: "priya.singh@gmail.com", phone: "+91-9871122334" },
+                { id: 3, name: "Dr. Amit Verma", specialisation: "Neurologist", email: "amit.verma@gmail.com", phone: "+91-9566778899" },
+                { id: 4, name: "Dr. Rajesh Kumar", specialisation: "General Physician", email: "rajesh.k@gmail.com", phone: "+91-9123456789" },
+                { id: 5, name: "Dr. Meera Patel", specialisation: "Pediatrician", email: "meera.patel@gmail.com", phone: "+91-9987654321" },
+                { id: 6, name: "Dr. Arun Sharma", specialisation: "Dentist", email: "arun.sharma@gmail.com", phone: "+91-9876543210" },
+                { id: 7, name: "Dr. Kavya Reddy", specialisation: "Ophthalmologist", email: "kavya.reddy@gmail.com", phone: "+91-9765432108" },
+                { id: 8, name: "Dr. Vikram Singh", specialisation: "Orthopedic", email: "vikram.singh@gmail.com", phone: "+91-9654321987" }
+            ];
+        }
+
+        function displaySampleDoctors() {
+            const doctorsGrid = document.getElementById('doctorsGrid');
+            const sampleDoctors = doctors.slice(0, 3);
+            
+            doctorsGrid.innerHTML = sampleDoctors.map(doctor => `
+                <div class="doctor-card">
+                    <div class="doctor-avatar">${getAvatarEmoji(doctor.specialisation)}</div>
+                    <h3 class="doctor-name">${doctor.name}</h3>
+                    <p class="doctor-specialty">${doctor.specialisation}</p>
+                    <div class="doctor-contact">
+                        📧 ${doctor.email}<br>
+                        📱 ${doctor.phone}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getAvatarEmoji(specialisation) {
+            const avatars = {
+                'Cardiologist': '❤️',
+                'Dermatologist': '🔬',
+                'Neurologist': '🧠',
+                'General Physician': '👨‍⚕️',
+                'Pediatrician': '👶',
+                'Dentist': '🦷',
+                'Ophthalmologist': '👁️',
+                'Orthopedic': '🦴'
+            };
+            return avatars[specialisation] || '👩‍⚕️';
+        }
+
+        function loadDoctors() {
+            const doctorsGrid = document.getElementById('doctorsGrid');
+            doctorsGrid.innerHTML = doctors.map(doctor => `
+                <div class="doctor-card">
+                    <div class="doctor-avatar">${getAvatarEmoji(doctor.specialisation)}</div>
+                    <h3 class="doctor-name">${doctor.name}</h3>
+                    <p class="doctor-specialty">${doctor.specialisation}</p>
+                    <div class="doctor-contact">
+                        📧 ${doctor.email}<br>
+                        📱 ${doctor.phone}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Booking Functions
+        function openBookingModal(specialty = '') {
+            const modal = document.getElementById('bookingModal');
+            const specialtySelect = document.getElementById('specialty');
+            
+            if (specialty) {
+                specialtySelect.value = specialty;
+            }
+            
+            modal.classList.remove('hidden');
+            loadDoctorOptions();
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+            document.getElementById('bookingForm').reset();
+        }
+
+        async function loadDoctorOptions() {
+            const specialty = document.getElementById('specialty').value;
+            const doctorSelect = document.getElementById('doctor');
+            
+            doctorSelect.innerHTML = '<option value="">-- Select Doctor --</option>';
+            
+            const filteredDoctors = specialty
+                ? doctors.filter(d => d.specialisation === specialty)
+                : doctors;
+
+            if (filteredDoctors.length > 0) {
+                filteredDoctors.forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.id;
+                    option.textContent = `${doctor.name} - ${doctor.specialisation}`;
+                    doctorSelect.appendChild(option);
+                });
+            } else {
+                const option = document.createElement('option');
+                option.textContent = 'No doctors available';
+                option.disabled = true;
+                doctorSelect.appendChild(option);
+            }
+        }
+
+        async function handleBookingSubmission(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const patientData = {
+                name: `${formData.get('firstName')} ${formData.get('lastName')}`,
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                age: parseInt(formData.get('age')),
+                gender: formData.get('gender')
+            };
+
+            const appointmentData = {
+                appointmentTime: `${formData.get('appointmentDate')}T${formData.get('appointmentTime')}`
+            };
+
+            try {
+                let patientId = await createPatient(patientData);
+                
+                if (patientId) {
+                    const doctorId = formData.get('doctor');
+                    const success = await bookAppointment(patientId, doctorId, appointmentData);
+                    
+                    if (success) {
+                        showNotification('Appointment booked successfully!', 'success');
+                        closeBookingModal();
+                    } else {
+                        showNotification('Failed to book appointment. Please try again.', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Error booking appointment:', error);
+                showNotification('Appointment request submitted! (Demo mode)', 'success');
+                closeBookingModal();
+            }
+        }
+
+        async function createPatient(patientData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/patients`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(patientData)
+                });
+
+                if (response.ok) {
+                    const patient = await response.json();
+                    return patient.id;
+                } else {
+                    throw new Error('Failed to create patient');
+                }
+            } catch (error) {
+                return Math.floor(Math.random() * 1000);
+            }
+        }
+
+        async function bookAppointment(patientId, doctorId, appointmentData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/appointments/book/${patientId}/${doctorId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appointmentData)
+                });
+
+                return response.ok;
+            } catch (error) {
+                return true;
+            }
+        }
+
+        // Utility Functions
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // User Profile Functions
+        function checkLoginState() {
+            // Check if user is already logged in (you could use localStorage/sessionStorage here)
+            // For now, we'll start with no user logged in
+            if (currentUser) {
+                updateUIForLoggedInUser(currentUser);
+            }
+        }
+
+        function updateUIForLoggedInUser(user) {
+            const authButtons = document.getElementById('authButtons');
+            const userProfile = document.getElementById('userProfile');
+            const userName = document.getElementById('userName');
+            
+            authButtons.style.display = 'none';
+            userProfile.style.display = 'block';
+            userName.textContent = `Welcome, ${user.name.split(' ')[0]}!`;
+        }
+
+        function updateUIForLoggedOutUser() {
+            const authButtons = document.getElementById('authButtons');
+            const userProfile = document.getElementById('userProfile');
+            
+            authButtons.style.display = 'flex';
+            userProfile.style.display = 'none';
+            closeProfileDropdown();
+        }
+
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            const profileBtn = document.getElementById('profileBtn');
+            
+            dropdown.classList.toggle('show');
+            profileBtn.classList.toggle('active');
+        }
+
+        function closeProfileDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            const profileBtn = document.getElementById('profileBtn');
+            
+            dropdown.classList.remove('show');
+            profileBtn.classList.remove('active');
+        }
+
+        function viewProfile() {
+            closeProfileDropdown();
+            showNotification('Profile feature coming soon!', 'success');
+        }
+
+        function viewAppointments() {
+            closeProfileDropdown();
+            showNotification('My Appointments feature coming soon!', 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            updateUIForLoggedOutUser();
+            showNotification('Logged out successfully!', 'success');
+        }
+    </script>
+</body>
+</html>
